@@ -1,0 +1,44 @@
+import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+
+class Main {  
+  public static void main(String args[]) {
+    while(true) {
+      Scanner scan = new Scanner(System.in);
+      System.out.println("\nEnter Capital City: ");
+      String capital = scan.nextLine();
+      callApi(capital);
+    }
+  }
+
+  private static void callApi(String capital){
+    try{
+      URL url = new URL("https://restcountries.com/v3.1/capital/"+capital);
+  
+      HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+      connection.setRequestMethod("GET");
+      connection.setRequestProperty("Accept", "application/json");
+      
+      if (connection.getResponseCode() != 200) {
+  			throw new RuntimeException("Failed: HTTP error code : "+ connection.getResponseCode());
+  		}
+
+      BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+      String output;
+  		while ((output = br.readLine()) != null) {
+  			System.out.println(output);
+  		}
+  
+  		connection.disconnect();
+    } catch (MalformedURLException e) {
+        e.printStackTrace();
+    } catch (IOException e) {
+		    e.printStackTrace();
+	  }
+  }
+}
